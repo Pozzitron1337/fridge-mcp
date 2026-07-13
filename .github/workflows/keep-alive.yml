@@ -1,0 +1,14 @@
+name: Keep Render awake
+
+on:
+  schedule:
+    # каждые 9 минут
+    - cron: "*/9 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping fridge-mcp health
+        run: curl -fsS --retry 2 --retry-delay 5 --max-time 90 https://fridge-mcp.onrender.com/health
