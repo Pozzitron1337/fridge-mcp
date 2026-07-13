@@ -60,7 +60,25 @@ npm run start:http
 После деплоя отдай разработчику:
 
 ```
-https://<твой-сервис>.onrender.com/mcp
+URL:   https://<твой-сервис>.onrender.com/mcp
+Token: <значение MCP_ACCESS_TOKEN>
+Header: Authorization: Bearer <token>
+```
+
+В Render → Environment добавь:
+
+```
+MCP_ACCESS_TOKEN=твой_секретный_токен
+```
+
+Клиент (пример):
+
+```ts
+new StreamableHTTPClientTransport(new URL("https://....onrender.com/mcp"), {
+  requestInit: {
+    headers: { Authorization: `Bearer ${token}` },
+  },
+});
 ```
 
 Клиент должен говорить по **Streamable HTTP MCP**, не по обычному REST.

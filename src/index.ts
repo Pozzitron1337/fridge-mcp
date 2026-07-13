@@ -20,9 +20,33 @@ async function startStdio(): Promise<void> {
   await server.connect(transport);
 }
 
+function requireAccessToken(req: Request, res: Response, next: () => void): void {
+  const expected = process.env.MCP_ACCESS_TOKEN;
+  if (!expected) {
+    next();
+    return;
+  }
+
+  const header = req.header("authorization") ?? "";
+  const match = /^Bearer\s+(.+)$/i.exec(header);
+  const token = match?.[1]?.trim();
+
+  if (token && token === expected) {
+    next();
+    return;
+  }
+
+  res.status(401).json({
+    jsonrpc: "2.0",
+    error: { code: -32001, message: "Unauthorized. Send Authorization: Bearer <token>" },
+    id: null,
+  });
+}
+
 async function startHttp(): Promise<void> {
   const port = Number(process.env.PORT ?? 3000);
   const host = process.env.HOST ?? "0.0.0.0";
+  const accessTokenConfigured = Boolean(process.env.MCP_ACCESS_TOKEN);
   const app = createMcpExpressApp({ host });
 
   app.get("/", (_req: Request, res: Response) => {
@@ -31,6 +55,7 @@ async function startHttp(): Promise<void> {
       status: "ok",
       mcp: "/mcp",
       transport: "streamable-http",
+      auth: accessTokenConfigured ? "bearer" : "none",
     });
   });
 
@@ -38,7 +63,7 @@ async function startHttp(): Promise<void> {
     res.status(200).send("ok");
   });
 
-  app.post("/mcp", async (req: Request, res: Response) => {
+  app.post("/mcp", requireAccessToken, async (req: Request, res: Response) => {
     const server = createFridgeServer();
     try {
       const transport = new StreamableHTTPServerTransport({
@@ -62,7 +87,7 @@ async function startHttp(): Promise<void> {
     }
   });
 
-  app.get("/mcp", (_req: Request, res: Response) => {
+  app.get("/mcp", requireAccessToken, (_req: Request, res: Response) => {
     res.status(405).json({
       jsonrpc: "2.0",
       error: { code: -32000, message: "Method not allowed. Use POST." },
@@ -70,7 +95,7 @@ async function startHttp(): Promise<void> {
     });
   });
 
-  app.delete("/mcp", (_req: Request, res: Response) => {
+  app.delete("/mcp", requireAccessToken, (_req: Request, res: Response) => {
     res.status(405).json({
       jsonrpc: "2.0",
       error: { code: -32000, message: "Method not allowed." },
@@ -81,6 +106,11 @@ async function startHttp(): Promise<void> {
   app.listen(port, host, () => {
     console.log(`fridge-mcp HTTP listening on http://${host}:${port}`);
     console.log(`MCP endpoint: POST /mcp`);
+    console.log(
+      accessTokenConfigured
+        ? "Auth: Bearer token required (MCP_ACCESS_TOKEN)"
+        : "Auth: disabled (set MCP_ACCESS_TOKEN to enable)",
+    );
   });
 }
 
