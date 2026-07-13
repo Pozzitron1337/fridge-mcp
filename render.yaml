@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: fridge-mcp
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm install && npm run build
+    startCommand: node ./dist/index.js
+    healthCheckPath: /health
