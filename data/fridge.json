@@ -1,0 +1,68 @@
+{
+  "updatedAt": "2026-07-14T00:00:00.000Z",
+  "items": [
+    {
+      "name": "молоко",
+      "quantity": 1,
+      "unit": "л",
+      "expiresAt": "2026-07-18",
+      "location": "дверца"
+    },
+    {
+      "name": "яйца",
+      "quantity": 8,
+      "unit": "шт",
+      "expiresAt": "2026-07-25",
+      "location": "полка"
+    },
+    {
+      "name": "сыр",
+      "quantity": 200,
+      "unit": "г",
+      "expiresAt": "2026-07-20",
+      "location": "ящик"
+    },
+    {
+      "name": "масло сливочное",
+      "quantity": 1,
+      "unit": "пачка",
+      "expiresAt": "2026-08-01",
+      "location": "дверца"
+    },
+    {
+      "name": "помидоры",
+      "quantity": 4,
+      "unit": "шт",
+      "expiresAt": "2026-07-16",
+      "location": "ящик"
+    },
+    {
+      "name": "огурец",
+      "quantity": 2,
+      "unit": "шт",
+      "expiresAt": "2026-07-17",
+      "location": "ящик"
+    },
+    {
+      "name": "йогурт",
+      "quantity": 3,
+      "unit": "шт",
+      "expiresAt": "2026-07-19",
+      "location": "полка"
+    },
+    {
+      "name": "курица",
+      "quantity": 500,
+      "unit": "г",
+      "expiresAt": "2026-07-15",
+      "location": "полка"
+    },
+    {
+      "name": "пиво Corona",
+      "quantity": 5,
+      "unit": "бут",
+      "expiresAt": "2026-12-31",
+      "location": "полка"
+    }
+  ]
+}
