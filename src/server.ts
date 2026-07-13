@@ -8,7 +8,6 @@ import {
   formatItem,
   loadFridge,
   removeItem,
-  saveFridge,
 } from "./fridge.js";
 
 export function createFridgeServer(): McpServer {
@@ -58,7 +57,6 @@ export function createFridgeServer(): McpServer {
     async ({ name, quantity, unit, expiresAt, location }) => {
       const state = loadFridge();
       const item = addItem(state, { name, quantity, unit, expiresAt, location });
-      saveFridge(state);
       return {
         content: [
           {
@@ -94,7 +92,6 @@ export function createFridgeServer(): McpServer {
           isError: true,
         };
       }
-      saveFridge(state);
       if (result.item) {
         return {
           content: [

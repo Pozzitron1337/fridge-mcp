@@ -1,4 +1,10 @@
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
+import {
+  readFileSync,
+  writeFileSync,
+  renameSync,
+  mkdirSync,
+  existsSync,
+} from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -40,7 +46,10 @@ export function saveFridge(state: FridgeState): void {
   const path = dataPath();
   mkdirSync(dirname(path), { recursive: true });
   state.updatedAt = new Date().toISOString();
-  writeFileSync(path, JSON.stringify(state, null, 2) + "\n", "utf8");
+  const payload = JSON.stringify(state, null, 2) + "\n";
+  const tmp = `${path}.tmp`;
+  writeFileSync(tmp, payload, "utf8");
+  renameSync(tmp, path);
 }
 
 export function formatItem(item: FridgeItem): string {
@@ -91,6 +100,7 @@ export function addItem(
     if (input.unit) existing.unit = input.unit;
     if (input.expiresAt) existing.expiresAt = input.expiresAt;
     if (input.location) existing.location = input.location;
+    saveFridge(state);
     return existing;
   }
 
@@ -102,6 +112,7 @@ export function addItem(
     location: input.location,
   };
   state.items.push(item);
+  saveFridge(state);
   return item;
 }
 
@@ -123,10 +134,12 @@ export function removeItem(
   if (amount >= existing.quantity) {
     const removed = existing.quantity;
     state.items = state.items.filter((item) => item !== existing);
+    saveFridge(state);
     return { ok: true, removed };
   }
 
   existing.quantity -= amount;
+  saveFridge(state);
   return { ok: true, item: existing, removed: amount };
 }
 
