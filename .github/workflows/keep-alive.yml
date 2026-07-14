@@ -3,7 +3,7 @@ name: Keep Render awake
 on:
   schedule:
     # каждые 9 минут
-    - cron: "*/9 * * * *"
+    - cron: "9 * * * *"
   workflow_dispatch:
 
 jobs:
